@@ -17,6 +17,8 @@ module tb_sync_fifo;
     logic [DATA_WIDTH-1:0] rd_data_o;
     logic full_o;
     logic empty_o;
+    logic [$clog2(FIFO_DEPTH):0] rd_space_o;
+    logic [$clog2(FIFO_DEPTH):0] wr_space_o;
 
     // ---------------------------------------------------------------------
     // Scoreboard
@@ -44,7 +46,9 @@ module tb_sync_fifo;
         .wr_data_i,
         .rd_data_o,
         .full_o,
-        .empty_o
+        .empty_o,
+        .rd_space_o,
+        .wr_space_o
     );
 
     // ---------------------------------------------------------------------

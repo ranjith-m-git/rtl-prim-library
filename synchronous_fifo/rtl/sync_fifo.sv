@@ -12,11 +12,14 @@ module sync_fifo #(
     input  rd_en_i,                    // Read enable
     input  wr_en_i,                    // Write enable
 
-    input  [DATA_WIDTH-1:0] wr_data_i,// Write data
-    output [DATA_WIDTH-1:0] rd_data_o,// Read data
+    input  [DATA_WIDTH-1:0] wr_data_i, // Write data
+    output [DATA_WIDTH-1:0] rd_data_o, // Read data
 
     output full_o,                     // FIFO full indicator
-    output empty_o                     // FIFO empty indicator
+    output empty_o,                    // FIFO empty indicator
+
+    output logic [$clog2(FIFO_DEPTH):0] rd_space_o, // data available
+    output logic [$clog2(FIFO_DEPTH):0] wr_space_o  // free space
 );
 
     // Address width derived from FIFO depth
@@ -48,6 +51,12 @@ module sync_fifo #(
 
     // Next read pointer update
     assign rptr_d = rptr_q + (rd_en_i && !empty_o);
+
+    // Read space is the exact number of elements currently in the FIFO
+    assign rd_space_o = wptr_q - rptr_q;
+
+    // Write space is the maximum depth minus the elements currently in the FIFO
+    assign wr_space_o = FIFO_DEPTH - rd_space_o;
 
     // -------------------------------------------------------------------------
     // Pointer Registers

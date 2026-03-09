@@ -20,6 +20,7 @@ module async_fifo #(
     input  logic [DATA_WIDTH-1:0] wr_data_i,
     input  logic                  wr_en_i,
     output logic                  wr_full_o,
+    output logic [$clog2(FIFO_DEPTH):0] wr_space_o,
 
     // -------------------------------------------------------------------------
     // Read Clock Domain
@@ -29,7 +30,8 @@ module async_fifo #(
 
     output logic [DATA_WIDTH-1:0] rd_data_o,
     input  logic                  rd_en_i,
-    output logic                  rd_empty_o
+    output logic                  rd_empty_o,
+    output logic [$clog2(FIFO_DEPTH):0] rd_space_o
 );
 
     // -------------------------------------------------------------------------
@@ -91,6 +93,18 @@ module async_fifo #(
         end
     end
 
+    // Convert synced Gray read pointer back to binary
+    always_comb begin
+        rptr_bin_q2sync[ADDR_WIDTH] = rptr_gray_q2sync[ADDR_WIDTH];
+        for (int i = ADDR_WIDTH - 1; i >= 0; i--) begin
+            rptr_bin_q2sync[i] = rptr_bin_q2sync[i+1] ^ rptr_gray_q2sync[i];
+        end
+    end
+    
+    // Calculate remaining write space (safe pessimistic estimate)
+    // Space = Total Depth - (Current Write Ptr - Synced Read Ptr)
+    assign wr_space_o = FIFO_DEPTH - (wptr_bin_q - rptr_bin_q2sync);
+
     // -------------------------------------------------------------------------
     // Read Pointer Logic (Read Clock Domain)
     // -------------------------------------------------------------------------
@@ -128,6 +142,16 @@ module async_fifo #(
             rd_empty_o  <= rd_empty_d;
         end
     end
+
+    // Convert synced Gray write pointer back to binary
+    always_comb begin
+        wptr_bin_q2sync[ADDR_WIDTH] = wptr_gray_q2sync[ADDR_WIDTH];
+        for (int i = ADDR_WIDTH - 1; i >= 0; i--) begin
+            wptr_bin_q2sync[i] = wptr_bin_q2sync[i+1] ^ wptr_gray_q2sync[i];
+        end
+    end
+    // Available elements = Synced Write Ptr - Current Read Ptr
+    assign rd_space_o = wptr_bin_q2sync - rptr_bin_q;
 
     // -------------------------------------------------------------------------
     // FIFO Memory

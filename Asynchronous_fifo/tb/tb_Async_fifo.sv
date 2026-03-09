@@ -19,6 +19,7 @@ module tb_async_fifo;
     logic [DATA_WIDTH_test-1:0] wr_data_i_test;
     logic                  wr_en_i_test;
     logic                  wr_full_o_test;
+    logic [$clog2(FIFO_DEPTH):0] wr_space_o;
 
     // -------------------------------------------------------------------------
     // Read Clock Domain Signals
@@ -28,6 +29,7 @@ module tb_async_fifo;
     logic [DATA_WIDTH_test-1:0] rd_data_o_test;
     logic                  rd_en_i_test;
     logic                  rd_empty_o_test;
+    logic [$clog2(FIFO_DEPTH):0] rd_space_o;
 
     // -------------------------------------------------------------------------
     // DUT Instantiation
@@ -42,13 +44,15 @@ module tb_async_fifo;
         .wr_data_i  (wr_data_i_test),
         .wr_en_i    (wr_en_i_test),
         .wr_full_o  (wr_full_o_test),
+        .wr_space_o (wr_space_o),
 
         // Read domain
         .rd_clk_i   (rd_clk_i_test),
         .rd_rst_ni  (rd_rst_ni_test),
         .rd_data_o  (rd_data_o_test),
         .rd_en_i    (rd_en_i_test),
-        .rd_empty_o (rd_empty_o_test)
+        .rd_empty_o (rd_empty_o_test),
+        .rd_space_o(rd_space_o)
     );
 
     // -----------------------------------------------------------------------------

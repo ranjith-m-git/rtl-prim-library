@@ -84,8 +84,11 @@ module tb_clk_divider_n;
         check_div(2);   // div2
         check_div(3);   // odd
         check_div(4);   // even
+        check_div(5);   // odd
+        check_div(6);   // even
         check_div(7);   // odd
         check_div(8);   // even
+        check_div(9);   // odd
 
         // Randomized dynamic changes
 
