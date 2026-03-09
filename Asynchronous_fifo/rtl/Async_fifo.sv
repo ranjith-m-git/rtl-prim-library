@@ -43,10 +43,12 @@ module async_fifo #(
     logic [ADDR_WIDTH:0] rptr_bin_q, rptr_bin_d;
     logic [ADDR_WIDTH:0] rptr_gray_q, rptr_gray_d;
     logic [ADDR_WIDTH:0] rptr_gray_q2sync;
+    logic [ADDR_WIDTH:0] rptr_bin_q2sync;
 
     logic [ADDR_WIDTH:0] wptr_bin_q, wptr_bin_d;
     logic [ADDR_WIDTH:0] wptr_gray_q, wptr_gray_d;
     logic [ADDR_WIDTH:0] wptr_gray_q2sync;
+    logic [ADDR_WIDTH:0] wptr_bin_q2sync;
 
     logic rd_empty_d;
     logic wr_full_d;
